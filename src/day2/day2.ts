@@ -29,10 +29,13 @@ const validGamesTotal = lines
 
     const valid = pulls
       .map((pull) => {
+        // get the number of each color (returns either a RegExpMatchArray or null)
         const red = pull.match(/(\d+) red/);
         const green = pull.match(/(\d+) green/);
         const blue = pull.match(/(\d+) blue/);
 
+        // if the color wasn't pulled at all, it's valid
+        // if the color was pulled, but the number is less than or equal to the number of that color allowed, it's valid
         return (
           (!red ? true : Number(red?.[1]) <= 12) &&
           (!green ? true : Number(green?.[1]) <= 13) &&
@@ -42,8 +45,10 @@ const validGamesTotal = lines
       .every((value) => value);
     return valid;
   })
+  // map to an array of game numbers
   .map((line) => Number(line.split(":")[0].replace("Game ", "")))
-  .reduce((a, b) => a + b);
+  // and reduce the array to the total of all the values
+  .reduce((acc, value) => acc + value);
 
 console.log(validGamesTotal);
 console.timeEnd("advent2");
