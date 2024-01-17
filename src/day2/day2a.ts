@@ -1,7 +1,7 @@
 // Read a text file
 import { readFileSync } from "fs";
 
-console.time("advent2");
+console.time("advent2a");
 
 // read the input file, with error handling
 let input = "";
@@ -19,7 +19,7 @@ try {
 // split the text file into an array of strings, line by line
 const lines = input.split("\r\n");
 
-const validGamesTotal = lines
+const answer = lines
   .filter((line) => {
     // create an array containing a game string and a pulls list string
     const strings = line.split(":");
@@ -50,5 +50,5 @@ const validGamesTotal = lines
   // and reduce the array to the total of all the values
   .reduce((acc, value) => acc + value);
 
-console.log(validGamesTotal);
-console.timeEnd("advent2");
+console.log(answer);
+console.timeEnd("advent2a");
