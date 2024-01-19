@@ -6,7 +6,7 @@ console.time("advent2a");
 // read the input file, with error handling
 let input = "";
 try {
-  input = readFileSync("./src/day3/test.txt", "utf8");
+  input = readFileSync("./src/day3/input.txt", "utf8");
 } catch (err) {
   // the TS compiler will throw an error if trying to access err.message without checking the error's type first
   if (err instanceof Error) {
@@ -39,9 +39,7 @@ lines.forEach((line, yIndex) => {
 
       if (numberString !== "") {
         const coords: [number, number][] = [];
-        console.log(xIndex - numberString.length, xIndex);
         for (let i = xIndex - numberString.length; i < xIndex; i++) {
-          console.log("i", i);
           coords.push([i, yIndex]);
         }
         numbers.push({
@@ -55,7 +53,7 @@ lines.forEach((line, yIndex) => {
       // Need to cover line end being a number here
       if (xIndex === characters.length - 1) {
         const coords: [number, number][] = [];
-        for (let i = xIndex - numberString.length; i < xIndex; i++) {
+        for (let i = xIndex - numberString.length + 1; i < xIndex; i++) {
           coords.push([i, yIndex]);
         }
         numbers.push({
@@ -78,67 +76,47 @@ lines.forEach((line, yIndex) => {
     }
   });
 });
-console.log(asteriskCoords);
-console.table(numbers.map((object) => object.coords));
 
-// asteriskCoords.forEach((asterisk) => {
+let gearPairs: number[][] = [];
+let gearRatios: number[] = [];
+asteriskCoords.forEach((asterisk) => {
+  const edges = [
+    [asterisk[0] - 1, asterisk[1] - 1], // top-left
+    [asterisk[0], asterisk[1] - 1], // top-middle
+    [asterisk[0] + 1, asterisk[1] - 1], // top-right
+    [asterisk[0] - 1, asterisk[1]], // middle-left
+    [asterisk[0] + 1, asterisk[1]], // middle-right
+    [asterisk[0] - 1, asterisk[1] + 1], // bottom-left
+    [asterisk[0], asterisk[1] + 1], // bottom-middle
+    [asterisk[0] + 1, asterisk[1] + 1], // bottom-right
+  ];
+  //console.log(edges);
 
-//     const edges = [
-//         [asterisk[0] - 1, asterisk[1] - 1], // top-left
-//         [asterisk[0], asterisk[1] - 1], // top-middle
-//         [asterisk[0] + 1, asterisk[1] - 1], // top-right
-//         [asterisk[0] - 1, asterisk[1]], // middle-left
-//         [asterisk[0] + 1, asterisk[1]], // middle-right
-//         [asterisk[0] - 1, asterisk[1] + 1], // bottom-left
-//         [asterisk[0], asterisk[1] + 1], // bottom-middle
-//         [asterisk[0] + 1, asterisk[1] + 1], // bottom-right
-//     ];
+  const collidingNumbers = numbers.filter((object) => {
+    const collision = object.coords.some((coord) => {
+      const edgeCollision = edges.some((edge) => {
+        if (edge[0] === coord[0] && edge[1] === coord[1]) return true;
+      });
+      if (edgeCollision) return true;
+    });
+    if (collision) return true;
+  });
+  console.log(collidingNumbers);
+  if (collidingNumbers.length === 2) {
+    const pair = collidingNumbers.map((n) => Number(n.num));
+    gearPairs.push(pair);
+    const gearRatio =
+      Number(collidingNumbers[0].num) * Number(collidingNumbers[1].num);
+    gearRatios.push(gearRatio);
+  }
+});
+// console.log(numbers.find((n) => n.num === "714"));
+// console.log(numbers.find((n) => n.num === "595"));
+// console.log(asteriskCoords);
+//console.log(gearRatios);
+// writeFileSync("./src/day3/log.txt", gearPairs.join("\n"));
 
-//     const collisions = numbers.filter((object) => {
+const answer = gearRatios.reduce((a, b) => a + b);
 
-//         if
-
-// const collisions = numbers.filter((object) => {
-//   // remember the start and end are arrays of [x, y]
-//   const startEdges = [
-//     [object.start[0] - 1, object.start[1] - 1], // top-left
-//     [object.start[0], object.start[1] - 1], // top-middle
-//     [object.start[0] + 1, object.start[1] - 1], // top-right
-//     [object.start[0] - 1, object.start[1]], // middle-left
-//     [object.start[0] - 1, object.start[1] + 1], // bottom-left
-//     [object.start[0], object.start[1] + 1], // bottom-middle
-//     [object.start[0] + 1, object.start[1] + 1], // bottom-right
-//   ];
-//   const endEdges = [
-//     [object.end[0] - 1, object.end[1] - 1], // top-left
-//     [object.end[0], object.end[1] - 1], // top-middle
-//     [object.end[0] + 1, object.end[1] - 1], // top-right
-//     [object.end[0] + 1, object.end[1]], // middle-right
-//     [object.end[0] - 1, object.end[1] + 1], // bottom-left
-//     [object.end[0], object.end[1] + 1], // bottom-middle
-//     [object.end[0] + 1, object.end[1] + 1], // bottom-right
-//   ];
-//   const collision = specialCoords.some((special) => {
-//     // does the start or end of the line intersect with a special character?
-//     const startCollision = startEdges.some(
-//       (edge) => edge[0] === special[0] && edge[1] === special[1]
-//     );
-//     const endCollision = endEdges.some(
-//       (edge) => edge[0] === special[0] && edge[1] === special[1]
-//     );
-//     if (startCollision || endCollision) return true;
-//   });
-//   if (collision) return true;
-//   return false;
-// });
-//console.log(collisions);
-// writeFileSync(
-//   "./src/day3/log.txt",
-//   collisions.map((object) => Number(object.num)).join("\n")
-// );
-// const numbersWithCollisions = collisions.map((object) => Number(object.num));
-
-// const answer = numbersWithCollisions.reduce((a, b) => a + b);
-
-// console.log(answer);
+console.log(answer);
 console.timeEnd("advent2a");
